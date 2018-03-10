@@ -18,6 +18,10 @@ output "user-kubeconfig" {
   value = "${local_file.user-kubeconfig.filename}"
 }
 
+output "admin-kubeconfig" {
+  value = "${local_file.admin-kubeconfig.filenam}"
+}
+
 # etcd TLS assets
 
 output "etcd_ca_cert" {

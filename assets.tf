@@ -65,6 +65,7 @@ data "template_file" "kubeconfig" {
     ca_cert      = "${base64encode(var.ca_certificate == "" ? join(" ", tls_self_signed_cert.kube-ca.*.cert_pem) : var.ca_certificate)}"
     kubelet_cert = "${base64encode(tls_locally_signed_cert.kubelet.cert_pem)}"
     kubelet_key  = "${base64encode(tls_private_key.kubelet.private_key_pem)}"
+    user         = "kubelet"
     server       = "${format("https://%s:443", element(var.api_servers, 0))}"
   }
 }
@@ -78,5 +79,16 @@ data "template_file" "user-kubeconfig" {
     kubelet_cert = "${base64encode(tls_locally_signed_cert.kubelet.cert_pem)}"
     kubelet_key  = "${base64encode(tls_private_key.kubelet.private_key_pem)}"
     server       = "${format("https://%s:443", element(var.api_servers, 0))}"
+  }
+}
+
+data "template_file" "admin-kubeconfig" {
+  template = "${file("${path.module}/resources/kubeconfig")}"
+  vars {
+    ca_cert      = "${base64encode(var.ca_certificate == "" ? join(" ", tls_self_signed_cert.kube-ca.*.cert_pem) : var.ca_certificate)}"
+    kubelet_cert = "${base64encode(tls_locally_signed_cert.admin.cert_pem)}"
+    kubelet_key  = "${base64encode(tls_private_key.admin.private_key_pem)}"
+    server       = "${format("https://%s:443", element(var.api_servers, 0))}"
+    user         = "admin"
   }
 }
