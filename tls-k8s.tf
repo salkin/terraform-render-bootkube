@@ -240,8 +240,8 @@ resource "local_file" "scheduler-key" {
   filename = "${var.asset_dir}/tls/scheduler.key"
 }
 
-resource "local_file" "kubelet-crt" {
-  content  = "${tls_locally_signed_cert.kubelet.cert_pem}"
+resource "local_file" "scheduler-crt" {
+  content  = "${tls_locally_signed_cert.scheduler.cert_pem}"
   filename = "${var.asset_dir}/tls/scheduler.crt"
 }
 

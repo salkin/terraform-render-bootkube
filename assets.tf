@@ -58,6 +58,12 @@ resource "local_file" "user-kubeconfig" {
   filename = "${var.asset_dir}/auth/${var.cluster_name}-config"
 }
 
+resource "local_file" "admin-kubeconfig" {
+  content  = "${data.template_file.admin-kubeconfig.rendered}"
+  filename = "${var.asset_dir}/auth/admin-kubeconfig"
+}
+
+
 data "template_file" "kubeconfig" {
   template = "${file("${path.module}/resources/kubeconfig")}"
 
