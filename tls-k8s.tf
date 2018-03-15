@@ -175,7 +175,7 @@ resource "tls_cert_request" "controller" {
   private_key_pem = "${tls_private_key.controller.private_key_pem}"
 
   subject {
-    common_name  = "controller"
+    common_name  = "kube-controller-manager"
     organization = "system:kube-controller-manager"
   }
 }
@@ -213,7 +213,7 @@ resource "tls_cert_request" "scheduler" {
   private_key_pem = "${tls_private_key.scheduler.private_key_pem}"
 
   subject {
-    common_name  = "scheduler"
+    common_name  = "kube-scheduler"
     organization = "system:kube-scheduler"
   }
 }
