@@ -15,7 +15,7 @@ spec:
     - --service-cluster-ip-range=${service_cidr}
     - --cloud-provider=${cloud_provider}
     - --configure-cloud-routes=false
-    - --kubeconfig=/etc/kubernetes/kubeconfig
+    - --kubeconfig=/etc/kubernetes/controller-kubeconfig
     - --leader-elect=true
     - --root-ca-file=/etc/kubernetes/bootstrap-secrets/ca.crt
     - --service-account-private-key-file=/etc/kubernetes/bootstrap-secrets/service-account.key

@@ -14,12 +14,20 @@ output "kubeconfig" {
   value = "${data.template_file.kubeconfig.rendered}"
 }
 
+output "controller-kubeconfig" {
+  value = "${data.template_file.controller-kubeconfig.rendered}"
+}
+
+output "scheduler-kubeconfig" {
+  value = "${data.template_file.scheduler-kubeconfig.rendered}"
+}
+
 output "user-kubeconfig" {
   value = "${local_file.user-kubeconfig.filename}"
 }
 
 output "admin-kubeconfig" {
-  value = "${local_file.admin-kubeconfig.filenam}"
+  value = "${local_file.admin-kubeconfig.filename}"
 }
 
 # etcd TLS assets
@@ -66,6 +74,30 @@ output "kubelet_cert" {
 
 output "kubelet_key" {
   value = "${base64encode(tls_private_key.kubelet.private_key_pem)}"
+}
+
+output "admin_cert" {
+  value = "${base64encode(tls_locally_signed_cert.admin.cert_pem)}"
+}
+
+output "admin_key" {
+  value = "${base64encode(tls_private_key.admin.private_key_pem)}"
+}
+
+output "controller_cert" {
+  value = "${base64encode(tls_locally_signed_cert.controller.cert_pem)}"
+}
+
+output "controller_key" {
+  value = "${base64encode(tls_private_key.controller.private_key_pem)}"
+}
+
+output "scheduler_cert" {
+  value = "${base64encode(tls_locally_signed_cert.scheduler.cert_pem)}"
+}
+
+output "scheduler_key" {
+  value = "${base64encode(tls_private_key.scheduler.private_key_pem)}"
 }
 
 output "server" {

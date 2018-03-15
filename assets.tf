@@ -92,3 +92,26 @@ data "template_file" "admin-kubeconfig" {
     user         = "admin"
   }
 }
+
+
+data "template_file" "controller-kubeconfig" {
+  template = "${file("${path.module}/resources/kubeconfig")}"
+  vars {
+    ca_cert      = "${base64encode(var.ca_certificate == "" ? join(" ", tls_self_signed_cert.kube-ca.*.cert_pem) : var.ca_certificate)}"
+    kubelet_cert = "${base64encode(tls_locally_signed_cert.controller.cert_pem)}"
+    kubelet_key  = "${base64encode(tls_private_key.controller.private_key_pem)}"
+    server       = "${format("https://%s:443", element(var.api_servers, 0))}"
+    user         = "controller"
+  }
+}
+
+data "template_file" "scheduler-kubeconfig" {
+  template = "${file("${path.module}/resources/kubeconfig")}"
+  vars {
+    ca_cert      = "${base64encode(var.ca_certificate == "" ? join(" ", tls_self_signed_cert.kube-ca.*.cert_pem) : var.ca_certificate)}"
+    kubelet_cert = "${base64encode(tls_locally_signed_cert.scheduler.cert_pem)}"
+    kubelet_key  = "${base64encode(tls_private_key.scheduler.private_key_pem)}"
+    server       = "${format("https://%s:443", element(var.api_servers, 0))}"
+    user         = "scheduler"
+  }
+}

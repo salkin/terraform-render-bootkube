@@ -164,6 +164,89 @@ resource "local_file" "kubelet-crt" {
   filename = "${var.asset_dir}/tls/kubelet.crt"
 }
 
+#Controller
+resource "tls_private_key" "controller" {
+  algorithm = "RSA"
+  rsa_bits  = "2048"
+}
+
+resource "tls_cert_request" "controller" {
+  key_algorithm   = "${tls_private_key.controller.algorithm}"
+  private_key_pem = "${tls_private_key.controller.private_key_pem}"
+
+  subject {
+    common_name  = "controller"
+    organization = "system:kube-controller-manager"
+  }
+}
+
+resource "tls_locally_signed_cert" "controller" {
+  cert_request_pem = "${tls_cert_request.controller.cert_request_pem}"
+
+  ca_key_algorithm   = "${var.ca_certificate == "" ? join(" ", tls_self_signed_cert.kube-ca.*.key_algorithm) : var.ca_key_alg}"
+  ca_private_key_pem = "${var.ca_certificate == "" ? join(" ", tls_private_key.kube-ca.*.private_key_pem) : var.ca_private_key}"
+  ca_cert_pem        = "${var.ca_certificate == "" ? join(" ", tls_self_signed_cert.kube-ca.*.cert_pem) : var.ca_certificate}"
+
+  validity_period_hours = 8760
+
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "server_auth",
+    "client_auth",
+  ]
+}
+
+resource "local_file" "controller-key" {
+  content  = "${tls_private_key.controller.private_key_pem}"
+  filename = "${var.asset_dir}/tls/controller.key"
+}
+
+#Scheduler
+resource "tls_private_key" "scheduler" {
+  algorithm = "RSA"
+  rsa_bits  = "2048"
+}
+
+resource "tls_cert_request" "scheduler" {
+  key_algorithm   = "${tls_private_key.scheduler.algorithm}"
+  private_key_pem = "${tls_private_key.scheduler.private_key_pem}"
+
+  subject {
+    common_name  = "scheduler"
+    organization = "system:kube-scheduler"
+  }
+}
+
+resource "tls_locally_signed_cert" "scheduler" {
+  cert_request_pem = "${tls_cert_request.scheduler.cert_request_pem}"
+
+  ca_key_algorithm   = "${var.ca_certificate == "" ? join(" ", tls_self_signed_cert.kube-ca.*.key_algorithm) : var.ca_key_alg}"
+  ca_private_key_pem = "${var.ca_certificate == "" ? join(" ", tls_private_key.kube-ca.*.private_key_pem) : var.ca_private_key}"
+  ca_cert_pem        = "${var.ca_certificate == "" ? join(" ", tls_self_signed_cert.kube-ca.*.cert_pem) : var.ca_certificate}"
+
+  validity_period_hours = 8760
+
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "server_auth",
+    "client_auth",
+  ]
+}
+
+resource "local_file" "scheduler-key" {
+  content  = "${tls_private_key.scheduler.private_key_pem}"
+  filename = "${var.asset_dir}/tls/scheduler.key"
+}
+
+resource "local_file" "kubelet-crt" {
+  content  = "${tls_locally_signed_cert.kubelet.cert_pem}"
+  filename = "${var.asset_dir}/tls/scheduler.crt"
+}
+
+
+
 #Admin 
 resource "tls_private_key" "admin" {
   algorithm = "RSA"
@@ -171,8 +254,8 @@ resource "tls_private_key" "admin" {
 }
 
 resource "tls_cert_request" "admin" {
-  key_algorithm   = "${tls_private_key.kubelet.algorithm}"
-  private_key_pem = "${tls_private_key.kubelet.private_key_pem}"
+  key_algorithm   = "${tls_private_key.admin.algorithm}"
+  private_key_pem = "${tls_private_key.admin.private_key_pem}"
 
   subject {
     common_name  = "admin"
